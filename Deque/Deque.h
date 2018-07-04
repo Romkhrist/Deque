@@ -162,7 +162,7 @@ void Deque<T>::clear()
 }
 
 template<typename T>
-bool Deque<T>::empty() const
+inline bool Deque<T>::empty() const
 {
     return !head;
 }
