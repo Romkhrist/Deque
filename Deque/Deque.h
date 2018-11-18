@@ -5,6 +5,12 @@
 #include <cstddef>
 
 template<typename T>
+class Deque;
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Deque<T>& d);
+
+template<typename T>
 class Deque
 {
     public:
@@ -18,11 +24,11 @@ class Deque
         T    peek_back() const;
         void clear();
 
-        inline bool empty() const;
-        inline std::size_t get_Size() const;
+        inline bool        is_empty() const;
+        inline std::size_t size() const;
 
     private:
-        std::size_t size;
+        std::size_t _size;
         
         struct node
         {
@@ -30,13 +36,12 @@ class Deque
             node *next;
             node *prev;
         } *head, *tail;
-        
-    template<typename T1>
-    friend std::ostream& operator<<(std::ostream& os, const Deque<T1>& d);
+
+    friend std::ostream& operator<<<>(std::ostream& os, const Deque<T>& d);
 };
 
 template<typename T>
-Deque<T>::Deque():head(nullptr), tail(nullptr), size(0)
+Deque<T>::Deque():head(nullptr), tail(nullptr), _size(0)
 {}
 
 template<typename T>
@@ -52,9 +57,9 @@ void Deque<T>::push_front(const T& value)
     tmp->value = value;
     tmp->prev  = nullptr;
     
-    if (empty())
+    if (is_empty())
     {
-        tmp->next = nullptr;
+        tmp->next   = nullptr;
         head = tail = tmp;
     }
     else
@@ -64,7 +69,7 @@ void Deque<T>::push_front(const T& value)
         head       = tmp;
     }
     
-    size++;
+    ++_size;
 }
 
 template<typename T>
@@ -74,9 +79,9 @@ void Deque<T>::push_back(const T& value)
     tmp->value = value;
     tmp->next  = nullptr;    
     
-    if(empty())
+    if(is_empty())
     {
-        tmp->prev = nullptr;
+        tmp->prev   = nullptr;
         head = tail = tmp;
     }
     else
@@ -86,13 +91,13 @@ void Deque<T>::push_back(const T& value)
         tail       = tmp;
     }
     
-    size++;
+    ++_size;
 }
 
 template<typename T>
 T Deque<T>::pop_front()
 {
-    if(empty())
+    if(is_empty())
     {
         throw "Deque is empty";
     }
@@ -102,7 +107,7 @@ T Deque<T>::pop_front()
     head       = head->next;
     
     delete tmp;
-    size--;
+    --_size;
     
     return value;
 }
@@ -110,7 +115,7 @@ T Deque<T>::pop_front()
 template<typename T>
 T Deque<T>::pop_back()
 {
-    if(empty())
+    if(is_empty())
     {
         throw "Deque is empty";
     }
@@ -120,7 +125,7 @@ T Deque<T>::pop_back()
     tail       = tail->prev;
     
     delete tmp;
-    size--;
+    --_size;
     
     return value;
 }
@@ -128,7 +133,7 @@ T Deque<T>::pop_back()
 template<typename T>
 T Deque<T>::peek_front() const
 {
-    if(empty())
+    if(is_empty())
     {
         throw "Deque is empty";
     }
@@ -139,7 +144,7 @@ T Deque<T>::peek_front() const
 template<typename T>
 T Deque<T>::peek_back() const
 {
-    if(empty())
+    if(is_empty())
     {
         throw "Deque is empty";
     }
@@ -150,7 +155,7 @@ T Deque<T>::peek_back() const
 template<typename T>
 void Deque<T>::clear()
 {
-    while(!empty())
+    while(!is_empty())
     {
         node *tmp = head;
         head      = head->next;
@@ -159,24 +164,25 @@ void Deque<T>::clear()
     }
     
     head = tail = nullptr;
+    _size       = 0;
 }
 
 template<typename T>
-inline bool Deque<T>::empty() const
+inline bool Deque<T>::is_empty() const
 {
     return !head;
 }
 
 template<typename T>
-inline std::size_t Deque<T>::get_Size() const
+inline std::size_t Deque<T>::size() const
 {
-    return size;
+    return _size;
 }
 
-template<typename T1>
-std::ostream& operator<<(std::ostream& os, const Deque<T1>& d)
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Deque<T>& d)
 {
-    typename Deque<T1>::node *tmp = d.head;
+    auto tmp = d.head;
     
     while(tmp)
     {
